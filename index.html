@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gentlerain - Leverage AI to grow valuable skills</title>
+    <meta name="description" content="Leverage AI to grow valuable skills through immersive realistic role play scenarios">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+    <!-- Three.js for Elite Water Effect -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+    
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">gentlerain</a>
+            
+            <div class="nav-links">
+                <a href="#product" class="nav-link">Product</a>
+                <a href="#concept" class="nav-link">Concept</a>
+                <a href="#business" class="nav-link">For business</a>
+                <a href="#partners" class="nav-link">Partners</a>
+            </div>
+            
+            <div class="nav-actions">
+                <a href="#" class="nav-link">Sign Up</a>
+                <a href="#" class="nav-link">Log in</a>
+                <a href="#" class="btn btn-primary-nav">Try now</a>
+            </div>
+            
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <!-- WebGL Container -->
+        <div id="webgl-hero"></div>
+        
+        <!-- Rain Drops Container (Kept as overlay) -->
+        <div class="rain-container"></div>
+        
+        <!-- Hero Content (Overlaying WebGL) -->
+        <div class="hero-center-visual">
+            <!-- Text is now rendered via WebGL, but we keep an invisible H1 for SEO -->
+            <h1 class="hero-text-seo">gentlerain</h1>
+            
+            <!-- Center Icon (Three Arcs) -->
+            <div class="hero-center-icon">
+                 <svg width="60" height="40" viewBox="0 0 60 40" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" class="arc-icon">
+                    <path d="M10 20 Q 30 5 50 20" />
+                    <path d="M15 28 Q 30 20 45 28" />
+                    <path d="M22 35 Q 30 32 38 35" />
+                 </svg>
+            </div>
+        </div>
+        
+        <!-- Hero Bottom Bar (Tagline + Actions) -->
+        <div class="hero-bottom-bar">
+            <div class="hero-tagline-area">
+                <h2 class="hero-tagline-main">
+                    Leverage AI to grow valuable skills through<br>
+                    immersive realistic role play scenarios
+                </h2>
+            </div>
+            
+            <div class="hero-cta-group">
+                <a href="#" class="btn btn-pill-outline">Contact Sales</a>
+                <a href="#" class="nav-link">Log In</a>
+            </div>
+        </div>
+    </section>
+    
+
+    <!-- Horizontal Scroll Cards Section -->
+    <section class="cards-section">
+        <!-- Background Blob Video -->
+        <div class="bg-video-container">
+            <video autoplay loop muted playsinline class="bg-blob-video">
+                <source src="assets/videos/hero-blob.webm" type="video/webm">
+            </video>
+        </div>
+
+        <div class="cards-track">
+            <!-- Slide 1: Upskill (Orange) -->
+            <div class="feature-slide slide-upskill">
+                <div class="slide-text">
+                    <h2 class="slide-title">Upskill</h2>
+                    <p class="slide-description">Upskill by nailing true-to-life challenging work situations</p>
+                </div>
+                <div class="slide-visual">
+                    <div class="card-frame flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="assets/images/card-1.png" alt="Upskill UI" class="card-frame-img">
+                            </div>
+                            <div class="flip-card-back">
+                                <img src="assets/images/card-2-back.png" alt="Analytics" class="card-frame-img">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Play (Teal) -->
+            <div class="feature-slide slide-play">
+                <div class="slide-text">
+                    <h2 class="slide-title">Play</h2>
+                    <p class="slide-description">Play with your co-worker in multiplayer mode</p>
+                </div>
+                <div class="slide-visual">
+                     <!-- Yellow Sun Blob Background -->
+                    <div class="slide-blob"></div>
+                    <div class="card-frame">
+                        <img src="assets/images/card-2-front.png" alt="Play UI" class="card-frame-img">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Practice (Teal/Darker) -->
+            <div class="feature-slide slide-practice">
+                <div class="slide-text">
+                    <h2 class="slide-title">Practice</h2>
+                    <p class="slide-description">Practice one scene at a time through the immersive story of a fictional company</p>
+                </div>
+                <div class="slide-visual">
+                    <div class="card-frame flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="assets/images/card-4-front.png" alt="Practice UI" class="card-frame-img">
+                            </div>
+                            <div class="flip-card-back">
+                                <img src="assets/images/card-4-back.png" alt="Feedback" class="card-frame-img">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 4: Improve (Orange) -->
+            <div class="feature-slide slide-improve">
+                <div class="slide-text">
+                    <h2 class="slide-title">Improve</h2>
+                    <p class="slide-description">Improve with tailored feedback through an adaptive experience</p>
+                </div>
+                <div class="slide-visual">
+                    <div class="slide-blob blob-orange"></div>
+                    <div class="card-frame">
+                         <img src="assets/images/card-1.png" alt="Improve UI" class="card-frame-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- NEW Horizontal Scroll Section -->
+    <section class="horizontal-section">
+        <div class="horizontal-container">
+            <h2 class="horizontal-title">Real-world scenarios</h2>
+            <div class="horizontal-track-wrapper">
+                <div class="horizontal-track">
+                    <!-- Card 1: Leadership -->
+                    <div class="horiz-card">
+                        <div class="horiz-card-visual" style="background-color: #fff8f0;">
+                            <img src="assets/images/scenario-leadership.png" alt="Leadership Training">
+                        </div>
+                        <div class="horiz-card-content">
+                            <h3>Leadership Training</h3>
+                            <p>Master difficult conversations with direct reports.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2: Sales -->
+                    <div class="horiz-card">
+                        <div class="horiz-card-visual" style="background-color: #fff8f0;">
+                            <img src="assets/images/scenario-sales.png" alt="Sales Negotiation">
+                        </div>
+                        <div class="horiz-card-content">
+                            <h3>Sales Negotiation</h3>
+                            <p>Practice objection handling in a risk-free environment.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3: Support -->
+                    <div class="horiz-card">
+                        <div class="horiz-card-visual" style="background-color: #fff8f0;">
+                            <img src="assets/images/scenario-support.png" alt="Customer Support">
+                        </div>
+                        <div class="horiz-card-content">
+                            <h3>Customer Support</h3>
+                            <p>De-escalate tense situations with empathy and patience.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 4: Reviews -->
+                    <div class="horiz-card">
+                        <div class="horiz-card-visual" style="background-color: #fff8f0;">
+                            <img src="assets/images/scenario-review.png" alt="Performance Reviews">
+                        </div>
+                        <div class="horiz-card-content">
+                            <h3>Performance Reviews</h3>
+                            <p>Deliver constructive feedback effectively.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 5: Conflict -->
+                    <div class="horiz-card">
+                         <div class="horiz-card-visual" style="background-color: #fff8f0;">
+                            <img src="assets/images/scenario-conflict.png" alt="Conflict Resolution">
+                        </div>
+                        <div class="horiz-card-content">
+                            <h3>Conflict Resolution</h3>
+                            <p>Resolve inter-team disputes confidently.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Human Video Section (Scroll-controlled) -->
+    <section class="human-section">
+        <div class="human-video-wrapper">
+            <video class="human-video" muted playsinline preload="auto">
+                <source src="assets/videos/human-scroll.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="human-content">
+            <div class="human-text-container">
+                <p class="human-text" data-index="0">Going through challenges</p>
+                <p class="human-text" data-index="1">with empathy</p>
+                <p class="human-text" data-index="2">building confidence</p>
+                <p class="human-text" data-index="3">growing together</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Concept Section -->
+    <section class="concept-section" id="concept">
+        <div class="container">
+            <div class="concept-content">
+                <div class="concept-text">
+                    <h2 class="concept-title">Why soft skills matter</h2>
+                    <p class="concept-description">
+                        In today's workplace, technical abilities alone aren't enough. 
+                        Communication, empathy, and problem-solving define career success.
+                    </p>
+                </div>
+                <div class="concept-visual">
+                    <img src="assets/images/bubble-bg.avif" alt="Bubble background" class="concept-bubble">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Integrations Marquee -->
+    <section class="integrations-section" id="partners">
+        <div class="marquee-wrapper">
+            <div class="marquee-content">
+                <div class="marquee-item">
+                    <span class="partner-text">CORNERSTONE</span>
+                </div>
+                <div class="marquee-item">
+                    <span class="partner-text">360LEARNING</span>
+                </div>
+                <div class="marquee-item">
+                    <span class="partner-text">SAP SuccessFactors</span>
+                </div>
+                <div class="marquee-item">
+                    <span class="partner-text">workday</span>
+                </div>
+                <div class="marquee-item">
+                    <span class="partner-text">docebo</span>
+                </div>
+                <div class="marquee-item">
+                    <span class="partner-text">absorb</span>
+                </div>
+                <!-- Duplicate -->
+                <div class="marquee-item">
+                    <span class="partner-text">CORNERSTONE</span>
+                </div>
+                <div class="marquee-item">
+                     <span class="partner-text">360LEARNING</span>
+                </div>
+                <div class="marquee-item">
+                    <span class="partner-text">SAP SuccessFactors</span>
+                </div>
+                <div class="marquee-item">
+                    <span class="partner-text">workday</span>
+                </div>
+                <div class="marquee-item">
+                    <span class="partner-text">docebo</span>
+                </div>
+                <div class="marquee-item">
+                    <span class="partner-text">absorb</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    
+
+
+    <!-- Business Section -->
+    <section class="business-section" id="business">
+        <div class="container">
+            <h2 class="business-title">For enterprise teams</h2>
+            <div class="business-grid">
+                <div class="business-card">
+                    <div class="business-icon">
+                        <img src="assets/images/l-orange.svg" alt="">
+                    </div>
+                    <h3>Custom scenarios</h3>
+                    <p>Build role-play scenarios tailored to your industry and company culture.</p>
+                </div>
+                <div class="business-card">
+                    <div class="business-icon">
+                        <img src="assets/images/l-blue.svg" alt="">
+                    </div>
+                    <h3>Analytics dashboard</h3>
+                    <p>Track team progress with comprehensive reporting and insights.</p>
+                </div>
+                <div class="business-card">
+                    <div class="business-icon">
+                        <img src="assets/images/l-green.svg" alt="">
+                    </div>
+                    <h3>LMS integrations</h3>
+                    <p>Seamlessly integrate with Cornerstone, Workday, SAP, and more.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-gradient"></div>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/images/logo.svg" alt="gentlerain" class="footer-logo-img">
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <a href="#">Features</a>
+                        <a href="#">Pricing</a>
+                        <a href="#">Integrations</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <a href="#">About</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <a href="#">Blog</a>
+                        <a href="#">Help Center</a>
+                        <a href="#">Privacy Policy</a>
+                    </div>
+                </div>
+                
+                <div class="footer-cta">
+                    <a href="#" class="btn btn-primary">Try now</a>
+                    <a href="#" class="btn btn-ghost">Contact Sales</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 gentlerain. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js" type="module"></script>
+</body>
+</html>
