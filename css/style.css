@@ -1344,7 +1344,7 @@ body.loaded .hero-cta-group {
 }
 
 /* ======================================
-   COMPREHENSIVE RESPONSIVE STYLES
+   RESPONSIVE STYLES - Based on Real gentlerain.ai
    ====================================== */
 
 /* Tablet Breakpoint */
@@ -1355,36 +1355,16 @@ body.loaded .hero-cta-group {
         --text-h2: clamp(1.5rem, 3vw, 2.5rem);
     }
 
+    /* Hide middle nav links, keep logo and actions */
     .nav-links {
         display: none;
     }
 
-    .nav-actions .nav-link {
-        display: none;
-    }
-
-    .mobile-menu-btn {
-        display: flex;
-    }
-
     .hero-bottom-bar {
         flex-direction: column;
-        gap: 2rem;
+        gap: 1.5rem;
         padding: 0 var(--space-md);
         align-items: flex-start;
-    }
-
-    .hero-tagline-main {
-        font-size: 1.25rem;
-    }
-
-    .horizontal-section {
-        height: auto;
-        min-height: 100vh;
-    }
-
-    .horizontal-container {
-        padding: var(--space-lg) var(--space-md);
     }
 
     .horiz-card {
@@ -1408,7 +1388,7 @@ body.loaded .hero-cta-group {
     }
 }
 
-/* Mobile Breakpoint */
+/* Mobile Breakpoint - Matches Real gentlerain.ai */
 @media (max-width: 768px) {
     :root {
         --text-hero: clamp(2.5rem, 15vw, 5rem);
@@ -1418,95 +1398,109 @@ body.loaded .hero-cta-group {
         --space-2xl: 6rem;
     }
 
-    /* Navigation - Mobile Menu */
+    /* ========== NAVIGATION - NO HAMBURGER ==========
+       Real site shows: Logo (left) + "Try now" button (right)
+       No hamburger menu, no nav links
+    */
     .navbar {
-        padding: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
     }
 
     .nav-container {
-        flex-wrap: wrap;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
-    .nav-links,
+    /* Hide all nav links on mobile */
+    .nav-links {
+        display: none !important;
+    }
+
+    /* Hide hamburger - real site doesn't have one */
+    .mobile-menu-btn {
+        display: none !important;
+    }
+
+    /* Show only "Try now" button in nav-actions */
     .nav-actions {
+        display: flex !important;
+    }
+
+    /* Hide text links in nav-actions, show only button */
+    .nav-actions .nav-link {
         display: none;
     }
 
-    .mobile-menu-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        background: transparent;
+    /* Style the "Try now" button like real site */
+    .nav-actions .btn-pill-outline {
+        display: inline-flex;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.875rem;
         border: 1px solid var(--color-cream);
-        border-radius: 8px;
-        cursor: pointer;
+        color: var(--color-cream);
+        border-radius: 999px;
     }
 
-    .hamburger {
-        width: 20px;
-        height: 2px;
-        background: var(--color-cream);
-        position: relative;
-    }
-
-    .hamburger::before,
-    .hamburger::after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: var(--color-cream);
-        left: 0;
-    }
-
-    .hamburger::before {
-        top: -6px;
-    }
-
-    .hamburger::after {
-        top: 6px;
-    }
-
-    /* Hero Section - Mobile */
+    /* ========== HERO SECTION ========== */
     .hero-section {
         min-height: 100vh;
-        padding-top: 80px;
+        padding-top: 70px;
+        display: flex;
+        flex-direction: column;
     }
 
     .hero-center-visual {
         padding: var(--space-md);
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    #webgl-hero canvas {
-        transform: scale(0.8);
+    /* Scale WebGL canvas for mobile */
+    #webgl-hero {
+        transform: scale(0.6);
+        transform-origin: center center;
     }
 
+    /* Hero bottom bar - left aligned tagline, horizontal buttons */
     .hero-bottom-bar {
         position: relative;
         bottom: auto;
-        padding: var(--space-md);
-        margin-top: auto;
+        left: auto;
+        right: auto;
+        padding: var(--space-md) var(--space-md) var(--space-lg);
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: flex-start;
     }
 
     .hero-tagline-main {
-        font-size: 1.1rem;
-        text-align: center;
+        font-size: 1rem;
+        text-align: left;
+        line-height: 1.5;
+        max-width: 100%;
     }
 
+    /* Buttons stay horizontal like real site */
     .hero-cta-group {
-        width: 100%;
-        flex-direction: column;
+        display: flex;
+        flex-direction: row;
         gap: 1rem;
+        flex-wrap: wrap;
     }
 
-    .btn-pill-outline {
-        width: 100%;
-        text-align: center;
+    .hero-cta-group .btn-pill-outline {
+        width: auto;
+        padding: 0.75rem 1.5rem;
     }
 
-    /* Cards Section - Mobile */
+    .hero-cta-group .nav-link {
+        font-size: 0.9rem;
+    }
+
+    /* ========== FEATURE CARDS SECTION ========== */
     .cards-section {
         padding: 0;
     }
@@ -1514,76 +1508,128 @@ body.loaded .hero-cta-group {
     .feature-slide {
         grid-template-columns: 1fr;
         padding: var(--space-md);
-        gap: var(--space-md);
+        gap: var(--space-lg);
         height: auto;
-        min-height: 100vh;
+        min-height: auto;
+        padding-top: 80px;
     }
 
     .slide-text {
         padding: 0;
-        text-align: center;
+        text-align: left;
+        order: 1;
     }
 
     .slide-title {
         font-size: var(--text-h1);
+        line-height: 1.1;
     }
 
     .slide-description {
         font-size: 1rem;
+        line-height: 1.6;
     }
 
     .slide-visual {
         padding: 0;
+        order: 2;
     }
 
     .card-frame {
         max-width: 100%;
+        height: auto;
     }
 
-    /* Horizontal Section - Mobile */
+    .card-frame img {
+        width: 100%;
+        height: auto;
+    }
+
+    /* ========== HORIZONTAL SECTION → VERTICAL CARDS ==========
+       On mobile, cards become full-viewport portrait style
+    */
     .horizontal-section {
         height: auto;
-        padding: var(--space-lg) 0;
+        padding: 0;
     }
 
     .horizontal-container {
         position: relative;
         height: auto;
-        padding: var(--space-md);
+        padding: 0;
     }
 
     .horizontal-title {
         font-size: var(--text-h2);
-        margin-bottom: var(--space-md);
+        padding: var(--space-md);
+        margin-bottom: 0;
     }
 
     .horizontal-track-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        overflow: visible;
+        height: auto;
     }
 
     .horizontal-track {
-        gap: 1.5rem;
-        padding-right: var(--space-md);
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+        padding: 0;
     }
 
+    /* Full-viewport portrait cards like real site */
     .horiz-card {
-        width: 260px;
-        height: 350px;
+        width: 100%;
+        max-width: 100%;
+        height: 100vh;
+        border-radius: 0;
         flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .horiz-card-visual {
+        flex: 1;
+        height: 100%;
+        padding: 0;
+    }
+
+    .horiz-card-visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    /* Title with orange background box - like real site */
+    .horiz-card-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: var(--space-md);
+        background: transparent;
+        border-top: 3px solid var(--color-orange);
     }
 
     .horiz-card-content h3 {
-        font-size: 1.2rem;
+        display: inline-block;
+        background: var(--color-orange);
+        color: var(--color-cream);
+        font-size: 1.25rem;
+        padding: 0.5rem 1rem;
+        margin: 0;
     }
 
     .horiz-card-content p {
-        font-size: 0.9rem;
+        display: none;
     }
 
-    /* Human Section - Mobile */
+    /* ========== HUMAN VIDEO SECTION ========== */
     .human-section {
-        height: 200vh;
+        height: 150vh;
     }
 
     .human-text {
@@ -1591,37 +1637,43 @@ body.loaded .hero-cta-group {
         padding: 0 var(--space-md);
     }
 
-    /* Concept Section - Mobile */
+    /* ========== CONCEPT SECTION ========== */
     .concept-section {
         padding: var(--space-xl) var(--space-md);
     }
 
     .concept-content {
         flex-direction: column;
-        text-align: center;
+        text-align: left;
+        gap: var(--space-md);
     }
 
     .concept-title {
         font-size: var(--text-h2);
     }
 
-    /* Partners Marquee - Mobile */
+    /* ========== INTEGRATIONS MARQUEE ========== */
     .integrations-section {
         padding: var(--space-md) 0;
     }
 
     .partner-text {
-        font-size: 1rem;
+        font-size: 0.875rem;
+        padding: 0 0.75rem;
     }
 
-    /* Business Section - Mobile */
+    /* ========== BUSINESS SECTION ========== */
     .business-section {
         padding: var(--space-xl) var(--space-md);
     }
 
     .business-title {
         font-size: var(--text-h2);
-        text-align: center;
+        text-align: left;
+    }
+
+    .business-subtitle {
+        text-align: left;
     }
 
     .business-grid {
@@ -1631,53 +1683,99 @@ body.loaded .hero-cta-group {
 
     .business-card {
         padding: var(--space-md);
-        text-align: center;
+        text-align: left;
     }
 
-    /* Footer - Mobile */
+    /* ========== FOOTER - 2-COLUMN LINK LAYOUT ==========
+       Real site has: LEFT (gray category) | RIGHT (white link)
+    */
     .footer {
         padding: var(--space-xl) var(--space-md);
     }
 
     .footer-content {
         flex-direction: column;
-        text-align: center;
         gap: var(--space-lg);
     }
 
     .footer-links {
         flex-direction: column;
-        gap: var(--space-md);
+        gap: 0;
+        width: 100%;
     }
 
     .footer-column {
-        text-align: center;
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .footer-column h4 {
+        display: none;
+    }
+
+    /* Two-column link rows */
+    .footer-column ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-column li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-column li::before {
+        content: attr(data-category);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    .footer-column a {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--color-cream);
     }
 
     .footer-cta {
         flex-direction: column;
         gap: 1rem;
         width: 100%;
+        align-items: flex-start;
     }
 
     .footer-cta .btn {
-        width: 100%;
+        width: auto;
     }
 
     .footer-bottom {
         text-align: center;
+        padding-top: var(--space-lg);
     }
 }
 
 /* Small Mobile Breakpoint */
 @media (max-width: 480px) {
     :root {
-        --text-hero: clamp(2rem, 12vw, 3.5rem);
+        --text-hero: clamp(1.75rem, 10vw, 3rem);
     }
 
-    .horiz-card {
-        width: 220px;
-        height: 300px;
+    #webgl-hero {
+        transform: scale(0.5);
+    }
+
+    .hero-tagline-main {
+        font-size: 0.9rem;
+    }
+
+    .hero-cta-group .btn-pill-outline {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
     }
 
     .feature-slide {
@@ -1685,7 +1783,15 @@ body.loaded .hero-cta-group {
     }
 
     .slide-title {
-        font-size: 2.5rem;
+        font-size: 2rem;
+    }
+
+    .horiz-card {
+        height: 85vh;
+    }
+
+    .horiz-card-content h3 {
+        font-size: 1rem;
     }
 }
 
