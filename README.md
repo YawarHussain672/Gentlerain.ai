@@ -28,7 +28,6 @@ npx serve .
 ```
 
 ## 🤖 AI Tools Used
-- **Claude** (Anthropic) - Code generation and debugging
 - **GitHub Copilot** - Code assistance
 
 ## 🎨 Credits
