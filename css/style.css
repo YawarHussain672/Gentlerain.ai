@@ -507,21 +507,21 @@ a:hover {
     position: relative;
     background-color: var(--color-orange);
     padding: 0;
-    /* overflow hidden removed */
+    /* Height = 4 cards x 100vh each to allow proper scrolling */
+    min-height: 400vh;
 }
 
 .cards-track {
     display: block;
     /* Vertical stacking */
     width: 100%;
+    position: relative;
 }
 
-/* Feature Slide Sticky Behavior */
+/* Feature Slide - GSAP controls pinning */
 .feature-slide {
-    position: sticky;
-    top: 0;
+    position: relative;
     width: 100%;
-    /* Full width */
     height: 100vh;
     flex-shrink: 0;
     display: grid;
@@ -530,6 +530,7 @@ a:hover {
     padding: var(--space-xl) var(--space-lg);
     gap: var(--space-xl);
     overflow: hidden;
+    will-change: transform, opacity, filter;
 }
 
 /* Stacking Order (Z-Index) */
@@ -1225,6 +1226,12 @@ body.loaded .hero-cta-group {
 
     *,
     *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 
@@ -1503,6 +1510,8 @@ body.loaded .hero-cta-group {
     /* ========== FEATURE CARDS SECTION ========== */
     .cards-section {
         padding: 0;
+        min-height: auto !important;
+        height: auto;
     }
 
     .feature-slide {

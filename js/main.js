@@ -1,51 +1,37 @@
 /**
  * GENTLERAIN CLONE - Main JavaScript
- * Pixel-perfect animations and interactions
  */
 
-// Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', initApp);
 
-// Global references
 let lenis = null;
 let scrollTrigger = null;
 
-/**
- * Initialize the application
- */
 function initApp() {
-    // Wait for libraries to load
     if (typeof Lenis === 'undefined' || typeof gsap === 'undefined') {
         setTimeout(initApp, 100);
         return;
     }
     
-    // Register GSAP plugins
     gsap.registerPlugin(ScrollTrigger);
     scrollTrigger = ScrollTrigger;
     
-    // Initialize all modules
     initSmoothScroll();
     initNavigation();
     initHumanVideoScroll();
     initHorizontalCards();
     initCardVideos();
-    initNewHorizontalScroll(); // NEW
-    initHeroWaterEffect(); // Water Ripple
-    initRainEffect();      // Rain Drops
+    initNewHorizontalScroll();
+    initHeroWaterEffect();
+    initRainEffect();
     initScrollReveal();
     
-    // Mark body as loaded for CSS animations
     requestAnimationFrame(() => {
         document.body.classList.add('loaded');
     });
 }
 
-/**
- * Smooth Scroll with Lenis
- */
 function initSmoothScroll() {
-    // Check for reduced motion preference
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         return;
     }
@@ -61,7 +47,6 @@ function initSmoothScroll() {
         infinite: false,
     });
     
-    // Integrate with GSAP
     lenis.on('scroll', ScrollTrigger.update);
     
     gsap.ticker.add((time) => {
@@ -70,7 +55,6 @@ function initSmoothScroll() {
     
     gsap.ticker.lagSmoothing(0);
     
-    // Handle anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', (e) => {
             const href = anchor.getAttribute('href');
@@ -88,14 +72,10 @@ function initSmoothScroll() {
     });
 }
 
-/**
- * Navigation scroll effects
- */
 function initNavigation() {
     const navbar = document.querySelector('.navbar');
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     
-    // Scroll-based navbar background
     ScrollTrigger.create({
         start: 'top -80',
         onUpdate: (self) => {
@@ -107,7 +87,6 @@ function initNavigation() {
         }
     });
     
-    // Mobile menu toggle
     if (mobileMenuBtn) {
         mobileMenuBtn.addEventListener('click', () => {
             document.body.classList.toggle('menu-open');
@@ -115,46 +94,37 @@ function initNavigation() {
     }
 }
 
-/**
- * Hero section entrance animations
- */
 function initHeroAnimations() {
     const heroTl = gsap.timeline({
         defaults: { duration: 1, ease: 'power3.out' }
     });
     
-    // Initial delay for page load
     heroTl.to({}, { duration: 0.3 });
     
-    // Wavy text appears
     heroTl.to('.hero-text-wavy', {
         opacity: 0.9,
         y: 0,
         duration: 1.2,
     });
     
-    // Lottie animation
     heroTl.to('.hero-lottie-container', {
         opacity: 1,
         y: 0,
         duration: 0.8,
     }, '-=0.8');
     
-    // Subtitle
     heroTl.to('.hero-subtitle', {
         opacity: 0.95,
         y: 0,
         duration: 0.8,
     }, '-=0.5');
     
-    // CTA buttons
     heroTl.to('.hero-cta-group', {
         opacity: 1,
         y: 0,
         duration: 0.6,
     }, '-=0.4');
     
-    // SVG Filter Animation (Liquid Text)
     const turbulence = document.querySelector('#liquid-filter feTurbulence');
     if (turbulence) {
         gsap.to(turbulence, {
@@ -166,7 +136,6 @@ function initHeroAnimations() {
         });
     }
 
-    // Parallax on scroll
     gsap.to('.hero-text-wavy', {
         yPercent: -30,
         ease: 'none',
@@ -177,110 +146,211 @@ function initHeroAnimations() {
             scrub: 1,
         }
     });
-    
-
 }
 
-/**
- * Human video scroll-controlled playback
- */
+let humanVideoInitialized = false;
+
 function initHumanVideoScroll() {
     const section = document.querySelector('.human-section');
     const video = document.querySelector('.human-video');
     const texts = document.querySelectorAll('.human-text');
     
     if (!section || !video) return;
+    if (humanVideoInitialized) return;
     
-    // Wait for video metadata to load
+    const isMobile = window.innerWidth <= 768;
+    
+    ScrollTrigger.getAll().forEach(st => {
+        if (st.trigger === section) {
+            st.kill();
+        }
+    });
+    
+    if (isMobile) {
+        humanVideoInitialized = true;
+        texts.forEach((text, i) => {
+            gsap.set(text, { opacity: i === 0 ? 1 : 0, y: 0 });
+        });
+        video.play().catch(() => {});
+        return;
+    }
+    
+    video.preload = 'auto';
+    video.load();
+    
     const initScrollVideo = () => {
         const duration = video.duration;
+        
+        if (!duration || isNaN(duration)) {
+            setTimeout(initScrollVideo, 500);
+            return;
+        }
+        
+        humanVideoInitialized = true;
         
         ScrollTrigger.create({
             trigger: section,
             start: 'top top',
             end: 'bottom bottom',
-            scrub: 0.5,
+            scrub: 0.3,
             onUpdate: (self) => {
-                // Update video playback time based on scroll
-                if (duration && !isNaN(duration)) {
+                const targetTime = self.progress * duration;
+                
+                if (Math.abs(video.currentTime - targetTime) > 0.05) {
                     try {
-                        video.currentTime = self.progress * duration;
-                    } catch (e) {
-                        // Ignore potential seeking errors
-                    }
+                        video.currentTime = targetTime;
+                    } catch (e) {}
                 }
                 
-                // Update text visibility
-                const textIndex = Math.floor(self.progress * texts.length);
-                texts.forEach((text, i) => {
-                    text.classList.toggle('active', i === textIndex);
-                });
+                if (texts.length > 0) {
+                    const textIndex = Math.min(
+                        Math.floor(self.progress * texts.length),
+                        texts.length - 1
+                    );
+                    texts.forEach((text, i) => {
+                        if (i === textIndex) {
+                            gsap.to(text, { opacity: 1, y: 0, duration: 0.3 });
+                        } else {
+                            gsap.to(text, { opacity: 0, y: 20, duration: 0.3 });
+                        }
+                    });
+                }
             }
+        });
+        
+        texts.forEach((text, i) => {
+            gsap.set(text, { opacity: i === 0 ? 1 : 0, y: i === 0 ? 0 : 20 });
         });
     };
 
     if (video.readyState >= 1) {
         initScrollVideo();
     } else {
-        video.addEventListener('loadedmetadata', initScrollVideo);
-        // Fallback if metadata takes too long
-        setTimeout(initScrollVideo, 1000);
+        video.addEventListener('loadedmetadata', initScrollVideo, { once: true });
+        setTimeout(() => {
+            if (!humanVideoInitialized) {
+                initScrollVideo();
+            }
+        }, 2000);
     }
-    
-    // Fallback if metadata doesn't load
-    video.load();
 }
 
-
-/**
- * Horizontal scrolling cards
- */
-/**
- * Horizontal scrolling cards
- */
-/**
- * Feature Slides - Sticky Stack Effect
- * "Previous card overlaps by the next card"
- */
 function initHorizontalCards() {
     const slides = document.querySelectorAll('.feature-slide');
+    const cardsSection = document.querySelector('.cards-section');
     
-    // Create a subtle scale animation for the card being covered
-    slides.forEach((slide, i) => {
-        if (i === slides.length - 1) return; // Last slide doesn't need to scale down
+    if (!slides.length || !cardsSection) return;
+    
+    const isMobile = window.innerWidth <= 768;
+    
+    ScrollTrigger.getAll().forEach(st => {
+        if (st.vars.id && (st.vars.id.startsWith('pin-slide') || st.vars.id.startsWith('fade-slide'))) {
+            st.kill();
+        }
+    });
+    
+    if (isMobile) {
+        slides.forEach((slide, i) => {
+            gsap.set(slide, { zIndex: i + 1 });
+            
+            gsap.from(slide, {
+                opacity: 0,
+                y: 50,
+                duration: 0.8,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: slide,
+                    start: 'top 85%',
+                    end: 'top 50%',
+                    toggleActions: 'play none none reverse',
+                    id: `mobile-reveal-${i}`
+                }
+            });
+            
+            gsap.from(slide.querySelectorAll('.slide-text, .slide-visual'), {
+                y: 40,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: slide,
+                    start: 'top 80%',
+                    end: 'top 40%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        });
+    } else {
+        const cardScrollHeight = window.innerHeight;
         
-        gsap.to(slide, {
-            scale: 0.95, // Subtle push back
-            filter: 'blur(10px)', // Modern depth of field effect
-            opacity: 0.5, // Fade out smoothly
-            ease: 'none',
-            scrollTrigger: {
+        slides.forEach((slide, i) => {
+            gsap.set(slide, { 
+                zIndex: i + 1,
+                position: 'relative',
+                top: 0
+            });
+            
+            ScrollTrigger.create({
                 trigger: slide,
                 start: 'top top',
-                end: 'bottom top', // As it scrolls out
-                scrub: true,
-                invalidateOnRefresh: true
+                end: () => `+=${cardScrollHeight}`,
+                pin: true,
+                pinSpacing: false,
+                scrub: 0.5,
+                invalidateOnRefresh: true,
+                anticipatePin: 1,
+                id: `pin-slide-${i}`
+            });
+            
+            if (i < slides.length - 1) {
+                gsap.to(slide, {
+                    scale: 0.9,
+                    filter: 'blur(10px)',
+                    opacity: 0.3,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: slide,
+                        start: 'top top',
+                        end: () => `+=${cardScrollHeight}`,
+                        scrub: true,
+                        invalidateOnRefresh: true,
+                        id: `fade-slide-${i}`
+                    }
+                });
             }
+            
+            gsap.from(slide.querySelectorAll('.slide-text, .slide-visual'), {
+                y: 60,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: slide,
+                    start: 'top 85%',
+                    end: 'top 50%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
         });
-        
-        // Ensure content inside enters nicely
-        gsap.from(slide.children, {
-            y: 50,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.1,
-            scrollTrigger: {
-                trigger: slide,
-                start: 'top 60%',
-                toggleActions: 'play none none reverse'
+    }
+    
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            const wasMobile = isMobile;
+            const nowMobile = window.innerWidth <= 768;
+            if (wasMobile !== nowMobile) {
+                initHorizontalCards();
+            } else {
+                ScrollTrigger.refresh();
             }
-        });
+        }, 200);
     });
 }
 
-/**
- * Card video hover play
- */
 function initCardVideos() {
     const cards = document.querySelectorAll('.scroll-card');
     
@@ -299,9 +369,6 @@ function initCardVideos() {
     });
 }
 
-/**
- * Scroll reveal animations
- */
 function initScrollReveal() {
     const revealElements = document.querySelectorAll('.reveal');
     
@@ -314,7 +381,6 @@ function initScrollReveal() {
         });
     });
     
-    // Section-specific reveals
     const sections = ['.concept-section', '.business-section', '.footer'];
     
     sections.forEach(selector => {
@@ -336,9 +402,6 @@ function initScrollReveal() {
     });
 }
 
-/**
- * Utility: Debounce function
- */
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -351,55 +414,52 @@ function debounce(func, wait) {
     };
 }
 
-/**
- * Handle window resize
- */
 window.addEventListener('resize', debounce(() => {
     ScrollTrigger.refresh();
 }, 250));
 
-/**
- * Export for potential module use
- */
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { initApp, lenis };
 }
 
-/**
- * NEW Horizontal Scroll Section Logic
- * Includes Background Color Transition & 3D Effects
- */
 function initNewHorizontalScroll() {
     const section = document.querySelector('.horizontal-section');
     const track = document.querySelector('.horizontal-track');
     const cards = document.querySelectorAll('.horiz-card');
     
     if (!section || !track) return;
+    
+    if (window.innerWidth <= 768) {
+        ScrollTrigger.getAll().forEach(st => {
+            if (st.trigger === section) {
+                st.kill();
+            }
+        });
+        gsap.set(track, { x: 0, clearProps: 'transform' });
+        gsap.set(cards, { skewX: 0, rotationY: 0, clearProps: 'transform' });
+        return;
+    }
 
-    // 1. Background Color Transition
-    // Animates from Orange (Vertical Section) to Deep Teal (Horizontal Section)
     gsap.fromTo(section, 
-        { backgroundColor: '#e75323' }, // Core orange
+        { backgroundColor: '#e75323' },
         { 
-            backgroundColor: '#0f3c4c', // Deep Teal / Dark Blue
+            backgroundColor: '#0f3c4c',
             ease: 'none',
             scrollTrigger: {
                 trigger: section,
-                start: 'top bottom', // Start when section enters viewport
-                end: 'center center', // Complete when section is centered
+                start: 'top bottom',
+                end: 'center center',
                 scrub: true
             }
         }
     );
     
-    // Calculate scroll amount
     const getScrollAmount = () => {
         let trackWidth = track.scrollWidth;
         return -(trackWidth - window.innerWidth + 100); 
     };
     
-    // 2. Horizontal Scroll Tween
-    const scrollTween = gsap.to(track, {
+    gsap.to(track, {
         x: getScrollAmount,
         ease: 'none',
         scrollTrigger: {
@@ -410,25 +470,21 @@ function initNewHorizontalScroll() {
             scrub: 1,
             invalidateOnRefresh: true,
             anticipatePin: 1,
-            // 3. 3D Skew Effect on Update
             onUpdate: (self) => {
                 const velocity = self.getVelocity();
-                const skew = velocity / 250; // Use velocity to determine skew amount
-                
-                // Clamp skew to avoid excessive distortion
+                const skew = velocity / 250;
                 const clampedSkew = Math.max(Math.min(skew, 15), -15);
                 
                 gsap.to(cards, {
                     skewX: clampedSkew,
-                    rotationY: clampedSkew * 0.5, // Slight Y rotation for 3D feel
+                    rotationY: clampedSkew * 0.5,
                     overwrite: 'auto',
                     duration: 0.1,
                     ease: 'power1.out'
                 });
             },
             onScrubComplete: () => {
-                 // Return to normal when stopped
-                 gsap.to(cards, {
+                gsap.to(cards, {
                     skewX: 0,
                     rotationY: 0,
                     duration: 0.5,
@@ -439,37 +495,21 @@ function initNewHorizontalScroll() {
     });
 }
 
-/**
- * Hero Water Ripple & Rain Effect
- */
-/**
- * Hero Water Ripple & Rain Effect
- */
-/**
- * Hero Water Ripple & Rain Effect
- */
-/**
- * ELITE WEBGL HERO - Fluid Simulation
- * Exact replica of gentlerain.ai water effect
- * NO chromatic aberration - pure fluid displacement only
- */
 function initHeroWaterEffect() {
     const container = document.getElementById('webgl-hero');
     if (!container) return;
 
-    // --- Configuration (tuned to match real site) ---
     const CONFIG = {
-        TRAIL_LENGTH: 15,           // Mouse trail points
-        TRAIL_RADIUS: 0.12,         // Radius of influence
-        DISTORTION_STRENGTH: 0.06,  // Melting intensity
-        EDGE_THRESHOLD: 0.4,        // When distortion kicks in
-        MOUSE_LERP: 0.1,            // Mouse smoothing
-        DECAY_RATE: 0.92,           // Trail fade speed
-        IDLE_NOISE_SCALE: 4.0,      // Edge simmering frequency
-        IDLE_NOISE_STRENGTH: 0.003  // Edge simmering amplitude
+        TRAIL_LENGTH: 15,
+        TRAIL_RADIUS: 0.12,
+        DISTORTION_STRENGTH: 0.06,
+        EDGE_THRESHOLD: 0.4,
+        MOUSE_LERP: 0.1,
+        DECAY_RATE: 0.92,
+        IDLE_NOISE_SCALE: 4.0,
+        IDLE_NOISE_STRENGTH: 0.003
     };
 
-    // --- 1. Scene Setup ---
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -478,7 +518,6 @@ function initHeroWaterEffect() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // --- 2. Text Texture Creation ---
     function createTextTexture() {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -486,7 +525,6 @@ function initHeroWaterEffect() {
         canvas.width = 2048;
         canvas.height = 2048 / aspect;
         
-        // Position text in upper third of hero
         const fontSize = canvas.width * 0.17;
         const yPos = canvas.height * 0.38;
         
@@ -496,7 +534,6 @@ function initHeroWaterEffect() {
         ctx.font = `700 ${fontSize}px "Gabarito", sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        // CORRECT color from forensic analysis: #FFF0B3
         ctx.fillStyle = '#FFF0B3';
         
         ctx.fillText('gentlerain', canvas.width / 2, yPos);
@@ -510,13 +547,11 @@ function initHeroWaterEffect() {
 
     let textTexture = createTextTexture();
 
-    // --- 3. Mouse Trail System ---
     const mouseTrail = [];
     for (let i = 0; i < CONFIG.TRAIL_LENGTH; i++) {
-        mouseTrail.push({ x: -10, y: -10, strength: 0 }); // Start offscreen
+        mouseTrail.push({ x: -10, y: -10, strength: 0 });
     }
 
-    // --- 4. Shaders ---
     const vertexShader = `
         varying vec2 vUv;
         void main() {
@@ -525,7 +560,6 @@ function initHeroWaterEffect() {
         }
     `;
 
-    // Fluid displacement shader - NO chromatic aberration
     const fragmentShader = `
         precision highp float;
         
@@ -537,7 +571,6 @@ function initHeroWaterEffect() {
         
         varying vec2 vUv;
         
-        // Simple noise for idle edge simmering
         float hash(vec2 p) {
             return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
         }
@@ -553,7 +586,6 @@ function initHeroWaterEffect() {
             return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
         }
         
-        // Fluid field from mouse trail
         float getFluidField(vec2 p) {
             float field = 0.0;
             for (int i = 0; i < ${CONFIG.TRAIL_LENGTH}; i++) {
@@ -564,7 +596,6 @@ function initHeroWaterEffect() {
             return field;
         }
         
-        // Gradient for distortion direction
         vec2 getFluidGradient(vec2 p) {
             float eps = 0.002;
             float fx = getFluidField(vec2(p.x + eps, p.y)) - getFluidField(vec2(p.x - eps, p.y));
@@ -577,7 +608,6 @@ function initHeroWaterEffect() {
             vec2 aspect = vec2(uResolution.x / uResolution.y, 1.0);
             vec2 aspectUv = uv * aspect;
             
-            // 1. IDLE EDGE SIMMERING (always active, even without mouse)
             float idleNoise = noise(uv * ${CONFIG.IDLE_NOISE_SCALE.toFixed(1)} + uTime * 0.5);
             idleNoise += noise(uv * ${(CONFIG.IDLE_NOISE_SCALE * 2.0).toFixed(1)} - uTime * 0.3) * 0.5;
             vec2 idleOffset = vec2(
@@ -585,28 +615,22 @@ function initHeroWaterEffect() {
                 cos(idleNoise * 6.28) * ${CONFIG.IDLE_NOISE_STRENGTH.toFixed(4)}
             );
             
-            // 2. MOUSE FLUID DISTORTION
             float field = getFluidField(aspectUv);
             vec2 gradient = getFluidGradient(aspectUv);
             float distortionAmount = smoothstep(0.0, ${CONFIG.EDGE_THRESHOLD.toFixed(2)}, field);
             
-            // Apply displacement (melting effect)
             vec2 fluidOffset = vec2(0.0);
             if (length(gradient) > 0.001) {
                 fluidOffset = -normalize(gradient) * distortionAmount * ${CONFIG.DISTORTION_STRENGTH.toFixed(3)};
             }
             
-            // 3. COMBINE: idle simmering + mouse fluid
             vec2 finalUV = uv + idleOffset + fluidOffset;
-            
-            // 4. SAMPLE TEXTURE (NO chromatic aberration - single sample)
             vec4 texColor = texture2D(uTexture, finalUV);
             
             gl_FragColor = texColor;
         }
     `;
 
-    // Initialize trail uniforms
     const trailPositions = [];
     const trailStrengths = [];
     
@@ -631,7 +655,6 @@ function initHeroWaterEffect() {
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     scene.add(mesh);
 
-    // --- 5. Mouse Tracking ---
     const mouse = { x: -10, y: -10, targetX: -10, targetY: -10, prevX: -10, prevY: -10 };
     let velocity = 0;
     let isMouseInHero = false;
@@ -657,11 +680,9 @@ function initHeroWaterEffect() {
         const time = clock.getElapsedTime();
         material.uniforms.uTime.value = time;
 
-        // Smooth mouse follow
         mouse.x += (mouse.targetX - mouse.x) * CONFIG.MOUSE_LERP;
         mouse.y += (mouse.targetY - mouse.y) * CONFIG.MOUSE_LERP;
 
-        // Calculate velocity
         const dx = mouse.x - mouse.prevX;
         const dy = mouse.y - mouse.prevY;
         const currentVelocity = Math.sqrt(dx * dx + dy * dy);
@@ -670,7 +691,6 @@ function initHeroWaterEffect() {
         mouse.prevX = mouse.x;
         mouse.prevY = mouse.y;
 
-        // Update mouse trail
         if (frameCount % 2 === 0) {
             for (let i = CONFIG.TRAIL_LENGTH - 1; i > 0; i--) {
                 mouseTrail[i].x = mouseTrail[i - 1].x;
@@ -684,7 +704,6 @@ function initHeroWaterEffect() {
             mouseTrail[0].strength = isMouseInHero ? Math.min(velocity * 2.5, 4.0) : 0;
         }
 
-        // Update uniforms
         for (let i = 0; i < CONFIG.TRAIL_LENGTH; i++) {
             trailPositions[i].set(mouseTrail[i].x, mouseTrail[i].y);
             trailStrengths[i] = mouseTrail[i].strength;
@@ -730,6 +749,5 @@ function initRainEffect() {
         });
     };
     
-    // Spawn drops frequently
-    setInterval(createDrop, 100); // 10 drops per second
+    setInterval(createDrop, 100);
 }
